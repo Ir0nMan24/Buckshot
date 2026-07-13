@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Buckshot Tracker</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+margin:0;
+height:100vh;
+background:#151515;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+width:100%;
+max-width:430px;
+height:100vh;
+padding:10px;
+display:flex;
+flex-direction:column;
+justify-content:space-around;
+}
+
+h1{
+text-align:center;
+font-size:28px;
+}
+
+.row{
+display:flex;
+gap:10px;
+}
+
+.box{
+flex:1;
+background:#292929;
+border-radius:12px;
+padding:10px;
+text-align:center;
+font-size:18px;
+}
+
+input,select{
+width:100%;
+font-size:22px;
+padding:8px;
+border-radius:8px;
+border:0;
+margin-top:5px;
+text-align:center;
+}
+
+button{
+width:100%;
+padding:15px;
+border:0;
+border-radius:15px;
+font-size:23px;
+font-weight:bold;
+}
+
+.start{
+background:#2196f3;
+color:white;
+}
+
+.real{
+background:#d32f2f;
+color:white;
+}
+
+.blank{
+background:#aaaaaa;
+color:black;
+}
+
+.info{
+text-align:center;
+font-size:24px;
+}
+
+#prediction{
+text-align:center;
+font-size:22px;
+}
+
+#alert{
+height:35px;
+text-align:center;
+font-size:26px;
+font-weight:bold;
+color:#00ff55;
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+<div class="container">
+
+
+<h1>Buckshot Tracker</h1>
+
+
+<div class="row">
+
+<div class="box">
+🔴 Schüsse
+<input id="liveInput" type="number" placeholder="0">
+</div>
+
+<div class="box">
+⚪ Blanks
+<input id="blankInput" type="number" placeholder="0">
+</div>
+
+</div>
+
+
+<button class="start" onclick="startGame()">
+Neue Runde starten
+</button>
+
+
+<div class="info">
+🔴 Übrig: <span id="liveCount">0</span>
+</div>
+
+<div class="info">
+⚪ Übrig: <span id="blankCount">0</span>
+</div>
+
+
+<button class="real" onclick="shoot(true)">
+🔴 Echter Schuss
+</button>
+
+
+<button class="blank" onclick="shoot(false)">
+⚪ Blank
+</button>
+
+
+
+<div class="row">
+
+<div class="box">
+Nach
+<input id="roundsInput" type="number" placeholder="Runden">
+</div>
+
+
+<div class="box">
+
+<select id="typeInput">
+
+<option value="blank">
+⚪ Blank
+</option>
+
+<option value="real">
+🔴 Schuss
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<button class="start" onclick="setPrediction()">
+Vorhersage setzen
+</button>
+
+
+<div id="prediction">
+Keine Vorhersage
+</div>
+
+
+<div id="alert"></div>
+
+
+</div>
+
+
+<script>
+
+
+let live=0;
+let blank=0;
+
+let counter=-1;
+let wanted="";
+
+
+// markiert Eingabe beim Antippen automatisch
+document.querySelectorAll("input").forEach(input=>{
+
+input.addEventListener("focus",function(){
+
+this.select();
+
+});
+
+});
+
+
+
+function startGame(){
+
+live=parseInt(
+document.getElementById("liveInput").value
+)||0;
+
+
+blank=parseInt(
+document.getElementById("blankInput").value
+)
+||0;
+
+
+update();
+
+counter=-1;
+
+document.getElementById("prediction").innerHTML=
+"Keine Vorhersage";
+
+document.getElementById("alert").innerHTML="";
+
+}
+
+
+
+function update(){
+
+document.getElementById("liveCount").innerHTML=live;
+
+document.getElementById("blankCount").innerHTML=blank;
+
+}
+
+
+
+
+function shoot(real){
+
+
+if(real){
+
+if(live>0)
+live--;
+
+}
+
+else{
+
+if(blank>0)
+blank--;
+
+}
+
+
+update();
+
+
+
+if(counter>=0){
+
+counter--;
+
+
+if(counter===0){
+
+document.getElementById("alert").innerHTML=
+"⚠ Jetzt kommt: "+wanted;
+
+
+}
+
+else{
+
+document.getElementById("prediction").innerHTML=
+wanted+" in "+counter+" Runden";
+
+}
+
+
+}
+
+
+}
+
+
+
+function setPrediction(){
+
+
+counter=parseInt(
+document.getElementById("roundsInput").value
+)
+||0;
+
+
+let type=document.getElementById("typeInput").value;
+
+
+if(type==="blank"){
+
+wanted="⚪ Blank";
+
+}
+
+else{
+
+wanted="🔴 Echter Schuss";
+
+}
+
+
+
+document.getElementById("prediction").innerHTML=
+wanted+" in "+counter+" Runden";
+
+
+document.getElementById("alert").innerHTML="";
+
+
+}
+
+
+
+</script>
+
+
+</body>
+</html>
